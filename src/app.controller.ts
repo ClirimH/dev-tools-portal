@@ -1,12 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Render } from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Render('index')
+  getLandingPage() {
+    return { title: 'Developer Tools' };
+  }
+
+  @Get('admin')
+  @Render('admin')
+  getAdminPage() {
+    return { title: 'Admin Panel' };
   }
 }
