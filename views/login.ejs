@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="container login-container">
+      <h1>Admin Login</h1>
+      <p id="login-message"></p>
+
+      <form class="form" id="login-form">
+        <input type="email" id="email" placeholder="Email" required />
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          minlength="6"
+          required
+        />
+        <button type="submit">Sign In</button>
+      </form>
+    </div>
+
+    <script src="/js/login.js"></script>
+  </body>
+</html>

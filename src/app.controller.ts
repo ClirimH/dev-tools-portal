@@ -9,6 +9,12 @@ export class AppController {
   }
 
   @Get('admin')
+  @Render('login')
+  getAdminLoginPage() {
+    return { title: 'Admin Login' };
+  }
+
+  @Get('admin/panel')
   @Render('admin')
   getAdminPage() {
     return { title: 'Admin Panel' };
