@@ -6,13 +6,18 @@ import { LinksModule } from './links/links.module';
 import { UsersModule } from './users/users.module';
 import { HealthModule } from './health/health.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
-    MongooseModule.forRoot(
-      process.env.MONGO_URI || 'mongodb://localhost:27017/developer-tools',
-    ),
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.getOrThrow<string>('MONGO_URI'),
+      }),
+    }),
     LinksModule,
     UsersModule,
     HealthModule,

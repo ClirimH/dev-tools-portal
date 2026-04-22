@@ -7,8 +7,16 @@ import { UsersService } from './users/users.service';
 
 async function seedAdmin(app: NestExpressApplication) {
   const usersService = app.get(UsersService);
-  const adminEmail = process.env.ADMIN_EMAIL || 'root@mail.com';
-  const adminPassword = process.env.ADMIN_PASSWORD || 'root1234';
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminEmail) {
+    throw new Error('Missing required environment variable: ADMIN_EMAIL');
+  }
+
+  if (!adminPassword) {
+    throw new Error('Missing required environment variable: ADMIN_PASSWORD');
+  }
 
   const existing = await usersService.findByEmail(adminEmail);
 
@@ -34,7 +42,22 @@ async function bootstrap() {
 
   await seedAdmin(app);
 
-  await app.listen(process.env.PORT ?? 3000);
+  const portValue = process.env.PORT;
+
+  if (!portValue) {
+    throw new Error('Missing required environment variable: PORT');
+  }
+
+  const port = Number(portValue);
+
+  if (Number.isNaN(port)) {
+    throw new Error('PORT must be a valid number');
+  }
+
+  await app.listen(port);
   console.log(`Application running on: ${await app.getUrl()}`);
 }
-bootstrap();
+void bootstrap().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
