@@ -1,5 +1,12 @@
 const token = localStorage.getItem('admin_access_token');
 const adminMessage = document.getElementById('admin-message');
+const linkForm = document.getElementById('link-form');
+const linkIdInput = document.getElementById('link-id');
+const titleInput = document.getElementById('title');
+const urlInput = document.getElementById('url');
+const iconInput = document.getElementById('icon');
+const submitLinkButton = document.getElementById('submit-link-button');
+const cancelEditButton = document.getElementById('cancel-edit-button');
 
 if (!token) {
   window.location.href = '/admin';
@@ -20,6 +27,25 @@ function handleUnauthorized(res) {
   }
 
   return false;
+}
+
+function resetFormState() {
+  linkIdInput.value = '';
+  linkForm.reset();
+  submitLinkButton.textContent = 'Add Link';
+  cancelEditButton.hidden = true;
+  adminMessage.textContent = '';
+}
+
+function startEdit(link) {
+  linkIdInput.value = link._id;
+  titleInput.value = link.title || '';
+  urlInput.value = link.url || '';
+  iconInput.value = link.icon || '';
+  submitLinkButton.textContent = 'Update Link';
+  cancelEditButton.hidden = false;
+  adminMessage.textContent =
+    'Editing link. Update the fields and save changes.';
 }
 
 async function loadAdminLinks() {
@@ -46,8 +72,12 @@ async function loadAdminLinks() {
       <img src="${link.icon || '/icons/default.png'}" />
       <h3>${link.title}</h3>
       <a href="${link.url}" target="_blank">Open</a>
+      <button type="button" class="edit-link-button">Edit</button>
       <button onclick="deleteLink('${link._id}')">Delete</button>
     `;
+
+    const editButton = div.querySelector('.edit-link-button');
+    editButton.addEventListener('click', () => startEdit(link));
 
     container.appendChild(div);
   });
@@ -75,31 +105,40 @@ document.getElementById('logout-button').addEventListener('click', function () {
   window.location.href = '/admin';
 });
 
-document.getElementById('link-form').addEventListener('submit', async (e) => {
+cancelEditButton.addEventListener('click', function () {
+  resetFormState();
+});
+
+linkForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const title = document.getElementById('title').value;
-  const url = document.getElementById('url').value;
-  const icon = document.getElementById('icon').value;
+  const title = titleInput.value;
+  const url = urlInput.value;
+  const icon = iconInput.value;
+  const linkId = linkIdInput.value;
+  const isEditing = Boolean(linkId);
 
-  const res = await fetch('/api/admin/links', {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ title, url, icon }),
-  });
+  const res = await fetch(
+    isEditing ? `/api/admin/links/${linkId}` : '/api/admin/links',
+    {
+      method: isEditing ? 'PATCH' : 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ title, url, icon }),
+    },
+  );
 
   if (handleUnauthorized(res)) {
     return;
   }
 
   if (!res.ok) {
-    adminMessage.textContent = 'Failed to create link. Please check your data.';
+    adminMessage.textContent = isEditing
+      ? 'Failed to update link. Please check your data.'
+      : 'Failed to create link. Please check your data.';
     return;
   }
 
-  adminMessage.textContent = '';
-
-  e.target.reset();
+  resetFormState();
   loadAdminLinks();
 });
 
