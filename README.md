@@ -4,7 +4,7 @@ Dev Tools Portal is a NestJS + EJS application that serves:
 
 - a public landing page with active links
 - an admin login page
-- a protected admin panel for creating and deleting links
+- a protected admin panel for creating, updating and deleting links
 
 ## Tech Stack
 
