@@ -7,7 +7,7 @@ import { UsersService } from './users/users.service';
 
 async function seedAdmin(app: NestExpressApplication) {
   const usersService = app.get(UsersService);
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'root@mail.com';
   const adminPassword = process.env.ADMIN_PASSWORD || 'root1234';
 
   const existing = await usersService.findByEmail(adminEmail);
