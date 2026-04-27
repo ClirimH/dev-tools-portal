@@ -43,6 +43,7 @@ async function bootstrap() {
   await seedAdmin(app);
 
   const portValue = process.env.PORT;
+  console.log('PORT value:', portValue);
 
   if (!portValue) {
     throw new Error('Missing required environment variable: PORT');
