@@ -52,7 +52,7 @@ async function bootstrap() {
   const port = Number(portValue);
 
   if (Number.isNaN(port)) {
-    throw new Error('PORT must be a valid number');
+    throw new Error('PORT must be a valid number --');
   }
 
   await app.listen(port);
